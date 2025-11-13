@@ -12,8 +12,8 @@ namespace Display
 {
     public partial class Form1 : System.Windows.Forms.Form
     {
-        Bitmap _originalImage;
-        YCbCr _ycbcr = new YCbCr(3, 6, 1);
+        private Bitmap _originalImage;
+        private YCbCr _ycbcr = new YCbCr();
 
         public Form1()
         {
@@ -23,12 +23,28 @@ namespace Display
         private void Form1_Load(object sender, EventArgs e)
         {
             _originalImage = new Bitmap(@"C:\Users\kaspe\Desktop\YCbCrDisplay\Display\Images\Bird.bmp");
+            ApplySettings();
             SetImage(_originalImage);
         }
 
         private void SetImage(Image image)
         {
             pictureBox1.Image = image;
+        }
+
+        private void ApplySettings()
+        {
+            bool y = YCbCrCheckboxes.GetItemChecked(0);
+            bool cb = YCbCrCheckboxes.GetItemChecked(1);
+            bool cr = YCbCrCheckboxes.GetItemChecked(2);
+            _ycbcr.SetUses(y, cb, cr);
+            _ycbcr.SetConstants((ConversionConstants)ConversionsList.SelectedItem);
+        }
+
+        private void ShowImage()
+        {
+            ApplySettings();
+            ModifyImage(_ycbcr.Convert);
         }
 
         private void ModifyImage(Converter<Color, Color> converter)
@@ -50,29 +66,14 @@ namespace Display
             SetImage(newImage);
         }
 
-        private void YCbCr_btn_Click(object sender, EventArgs e)
+        private void SettingsBtn_Click(object sender, EventArgs e)
         {
-            SetImage(_originalImage);
+            ShowImage();
         }
-
-        private void CbCr_btn_Click(object sender, EventArgs e)
+        private void YCbCrCheckboxes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ModifyImage(_ycbcr.GetConverter_CbCr());
-        }
-
-        private void Cb_btn_Click(object sender, EventArgs e)
-        {
-            ModifyImage(_ycbcr.GetConverter_Cb());
-        }
-
-        private void Cr_btn_Click(object sender, EventArgs e)
-        {
-            ModifyImage(_ycbcr.GetConverter_Cr());
-        }
-
-        private void Y_btn_Click(object sender, EventArgs e)
-        {
-            ModifyImage(_ycbcr.GetConverter_Y());
+            int index = YCbCrCheckboxes.SelectedIndex;
+            if (index != -1) YCbCrCheckboxes.SetSelected(index, false);
         }
     }
 }

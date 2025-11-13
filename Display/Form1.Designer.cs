@@ -29,11 +29,9 @@
         private void InitializeComponent()
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.YCbCr_btn = new System.Windows.Forms.Button();
-            this.Cr_btn = new System.Windows.Forms.Button();
-            this.Cb_btn = new System.Windows.Forms.Button();
-            this.CbCr_btn = new System.Windows.Forms.Button();
-            this.Y_btn = new System.Windows.Forms.Button();
+            this.YCbCrCheckboxes = new System.Windows.Forms.CheckedListBox();
+            this.SettingsBtn = new System.Windows.Forms.Button();
+            this.ConversionsList = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,69 +44,70 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // YCbCr_btn
+            // YCbCrCheckboxes
             // 
-            this.YCbCr_btn.Location = new System.Drawing.Point(0, 400);
-            this.YCbCr_btn.Name = "YCbCr_btn";
-            this.YCbCr_btn.Size = new System.Drawing.Size(75, 50);
-            this.YCbCr_btn.TabIndex = 1;
-            this.YCbCr_btn.Text = "YCbCr";
-            this.YCbCr_btn.UseVisualStyleBackColor = true;
-            this.YCbCr_btn.Click += new System.EventHandler(this.YCbCr_btn_Click);
+            this.YCbCrCheckboxes.CheckOnClick = true;
+            this.YCbCrCheckboxes.FormattingEnabled = true;
+
+            this.YCbCrCheckboxes.Items.AddRange(new object[] {
+            "Y",
+            "Cb",
+            "Cr"});
+            this.YCbCrCheckboxes.SetItemChecked(0, true);
+            this.YCbCrCheckboxes.SetItemChecked(1, true);
+            this.YCbCrCheckboxes.SetItemChecked(2, true);
+
+            this.YCbCrCheckboxes.Location = new System.Drawing.Point(806, 0);
+            this.YCbCrCheckboxes.Name = "checkedListBox1";
+            this.YCbCrCheckboxes.Size = new System.Drawing.Size(60, 73);
+            this.YCbCrCheckboxes.TabIndex = 6;
+            this.YCbCrCheckboxes.SelectedIndexChanged += new System.EventHandler(this.YCbCrCheckboxes_SelectedIndexChanged);
             // 
-            // Cr_btn
+            // ConversionsList
             // 
-            this.Cr_btn.Location = new System.Drawing.Point(225, 400);
-            this.Cr_btn.Name = "Cr_btn";
-            this.Cr_btn.Size = new System.Drawing.Size(75, 50);
-            this.Cr_btn.TabIndex = 2;
-            this.Cr_btn.Text = "Cr";
-            this.Cr_btn.UseVisualStyleBackColor = true;
-            this.Cr_btn.Click += new System.EventHandler(this.Cr_btn_Click);
+            this.ConversionsList.FormattingEnabled = true;
+            this.ConversionsList.ItemHeight = 20;
+            
+            this.ConversionsList.Items.AddRange(new object[] {
+            new ConversionConstants(299, 587, 114, "JPEG"),
+            new ConversionConstants(650, 535, 445, "Wavelength"),
+            new ConversionConstants(3056, 3713, 4463, "Energy"),
+            new ConversionConstants(64, 32, 2, "Sensitivity"),
+            new ConversionConstants(1, 1, 1, "Equal"),
+            new ConversionConstants(1000, 1, 1, "Red"),
+            new ConversionConstants(1, 1000, 1, "Green"),
+            new ConversionConstants(1, 1, 1000, "Blue"),
+            new ConversionConstants(1, 1000, 1000, "GreenBlue"),
+            new ConversionConstants(1000, 1, 1000, "RedBlue"),
+            new ConversionConstants(1000, 1000, 1, "RedGreen")});
+            this.ConversionsList.SetSelected(0, true);
+
+            this.ConversionsList.Location = new System.Drawing.Point(806, 79);
+            this.ConversionsList.Name = "ConversionsList";
+            this.ConversionsList.Size = new System.Drawing.Size(153, 321);
+            this.ConversionsList.TabIndex = 8;
             // 
-            // Cb_btn
+            // SettingsBtn
             // 
-            this.Cb_btn.Location = new System.Drawing.Point(150, 400);
-            this.Cb_btn.Name = "Cb_btn";
-            this.Cb_btn.Size = new System.Drawing.Size(75, 50);
-            this.Cb_btn.TabIndex = 3;
-            this.Cb_btn.Text = "Cb";
-            this.Cb_btn.UseVisualStyleBackColor = true;
-            this.Cb_btn.Click += new System.EventHandler(this.Cb_btn_Click);
-            // 
-            // CbCr_btn
-            // 
-            this.CbCr_btn.Location = new System.Drawing.Point(75, 400);
-            this.CbCr_btn.Name = "CbCr_btn";
-            this.CbCr_btn.Size = new System.Drawing.Size(75, 50);
-            this.CbCr_btn.TabIndex = 4;
-            this.CbCr_btn.Text = "CbCr";
-            this.CbCr_btn.UseVisualStyleBackColor = true;
-            this.CbCr_btn.Click += new System.EventHandler(this.CbCr_btn_Click);
-            // 
-            // Y_btn
-            // 
-            this.Y_btn.Location = new System.Drawing.Point(300, 400);
-            this.Y_btn.Name = "Y_btn";
-            this.Y_btn.Size = new System.Drawing.Size(75, 50);
-            this.Y_btn.TabIndex = 5;
-            this.Y_btn.Text = "Y";
-            this.Y_btn.UseVisualStyleBackColor = true;
-            this.Y_btn.Click += new System.EventHandler(this.Y_btn_Click);
+            this.SettingsBtn.Location = new System.Drawing.Point(872, 0);
+            this.SettingsBtn.Name = "SettingsBtn";
+            this.SettingsBtn.Size = new System.Drawing.Size(87, 75);
+            this.SettingsBtn.TabIndex = 7;
+            this.SettingsBtn.Text = "Apply Settings";
+            this.SettingsBtn.UseVisualStyleBackColor = true;
+            this.SettingsBtn.Click += new System.EventHandler(this.SettingsBtn_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Y_btn);
-            this.Controls.Add(this.CbCr_btn);
-            this.Controls.Add(this.Cb_btn);
-            this.Controls.Add(this.Cr_btn);
-            this.Controls.Add(this.YCbCr_btn);
+            this.ClientSize = new System.Drawing.Size(965, 400);
+            this.Controls.Add(this.ConversionsList);
+            this.Controls.Add(this.SettingsBtn);
+            this.Controls.Add(this.YCbCrCheckboxes);
             this.Controls.Add(this.pictureBox1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "YCbCrCustomDisplay";
+            this.Text = "YCbCrCustomDisplay";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -118,11 +117,9 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button YCbCr_btn;
-        private System.Windows.Forms.Button Cr_btn;
-        private System.Windows.Forms.Button Cb_btn;
-        private System.Windows.Forms.Button CbCr_btn;
-        private System.Windows.Forms.Button Y_btn;
+        private System.Windows.Forms.CheckedListBox YCbCrCheckboxes;
+        private System.Windows.Forms.Button SettingsBtn;
+        private System.Windows.Forms.ListBox ConversionsList;
     }
 }
 

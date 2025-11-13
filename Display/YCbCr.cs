@@ -17,12 +17,19 @@ namespace Display
         private float K_G;
         private float K_B;
 
-        public YCbCr(int r, int g, int b)
+        private bool B_Y;
+        private bool B_Cb;
+        private bool B_Cr;
+
+        public YCbCr()
         {
-            float weight = r + g + b;
-            K_R = r / weight;
-            K_G = g / weight;
-            K_B = b / weight;
+            float weight = 3;
+            K_R = 1 / weight;
+            K_G = 1 / weight;
+            K_B = 1 / weight;
+            B_Y = true;
+            B_Cb = true;
+            B_Cr = true;
         }
 
         public void SetConstants(int r, int g, int b)
@@ -32,72 +39,25 @@ namespace Display
             K_G = g / weight;
             K_B = b / weight;
         }
-
-        public Converter<Color, Color> GetConverter_YCbCr()
+        public void SetConstants(ConversionConstants cc)
         {
-            Converter<Color, Color> converter = (Color oldColor) =>
-            {
-
-                float[] ycbcr = RGB2YCbCr(oldColor);
-                Color newColor = YCbCr2RGB(ycbcr);
-                return newColor;
-            };
-            return converter;
+            SetConstants(cc.R, cc.G, cc.B);
+        }
+        public void SetUses(bool y, bool cb, bool cr)
+        {
+            B_Y = y;
+            B_Cb = cb;
+            B_Cr = cr;
         }
 
-        public Converter<Color, Color> GetConverter_Y()
+        public Color Convert(Color oldColor)
         {
-            Converter<Color, Color> converter = (Color oldColor) =>
-            {
-
-                float[] ycbcr = RGB2YCbCr(oldColor);
-                ycbcr[1] = K_Cb;
-                ycbcr[2] = K_Cr;
-                Color newColor = YCbCr2RGB(ycbcr);
-                return newColor;
-            };
-            return converter;
-        }
-
-        public Converter<Color, Color> GetConverter_CbCr()
-        {
-            Converter<Color, Color> converter = (Color oldColor) =>
-            {
-
-                float[] ycbcr = RGB2YCbCr(oldColor);
-                ycbcr[0] = K_Y;
-                Color newColor = YCbCr2RGB(ycbcr);
-                return newColor;
-            };
-            return converter;
-        }
-
-        public Converter<Color, Color> GetConverter_Cb()
-        {
-            Converter<Color, Color> converter = (Color oldColor) =>
-            {
-
-                float[] ycbcr = RGB2YCbCr(oldColor);
-                ycbcr[0] = K_Y;
-                ycbcr[1] = K_Cb;
-                Color newColor = YCbCr2RGB(ycbcr);
-                return newColor;
-            };
-            return converter;
-        }
-
-        public Converter<Color, Color> GetConverter_Cr()
-        {
-            Converter<Color, Color> converter = (Color oldColor) =>
-            {
-
-                float[] ycbcr = RGB2YCbCr(oldColor);
-                ycbcr[0] = K_Y;
-                ycbcr[2] = K_Cr;
-                Color newColor = YCbCr2RGB(ycbcr);
-                return newColor;
-            };
-            return converter;
+            float[] ycbcr = RGB2YCbCr(oldColor);
+            if (!B_Y) ycbcr[0] = K_Y;
+            if (!B_Cb) ycbcr[1] = K_Cb;
+            if (!B_Cr) ycbcr[2] = K_Cr;
+            Color newColor = YCbCr2RGB(ycbcr);
+            return newColor;
         }
 
         private float[] MatrixMath(float[,] constans, float[] values)
