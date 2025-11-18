@@ -9,35 +9,36 @@ namespace Display
 {
     internal class YCbCr
     {
-        const float K_Y = 128f;
-        const float K_Cb = 0f;
-        const float K_Cr = 0f;
+        const float Default_Y = 128f;
+        const float Default_Cb = 0f;
+        const float Default_Cr = 0f;
 
-        private float K_R;
-        private float K_G;
-        private float K_B;
+        private float Constant_R;
+        private float Constant_G;
+        private float Constant_B;
 
-        private bool B_Y;
-        private bool B_Cb;
-        private bool B_Cr;
+        private bool Use_Y;
+        private bool Use_Cb;
+        private bool Use_Cr;
+
+        private float Factor_Y;
+        private float Factor_iY;
+        private float Factor_Cb;
+        private float Factor_Cr;
 
         public YCbCr()
         {
-            float weight = 3;
-            K_R = 1 / weight;
-            K_G = 1 / weight;
-            K_B = 1 / weight;
-            B_Y = true;
-            B_Cb = true;
-            B_Cr = true;
+            SetConstants(1, 1, 1);
+            SetUses(true, true, true);
+            SetFactors(1, 1, 1, 1);
         }
 
         public void SetConstants(int r, int g, int b)
         {
             float weight = r + g + b;
-            K_R = r / weight;
-            K_G = g / weight;
-            K_B = b / weight;
+            Constant_R = r / weight;
+            Constant_G = g / weight;
+            Constant_B = b / weight;
         }
         public void SetConstants(ConversionConstants cc)
         {
@@ -45,31 +46,40 @@ namespace Display
         }
         public void SetUses(bool y, bool cb, bool cr)
         {
-            B_Y = y;
-            B_Cb = cb;
-            B_Cr = cr;
+            Use_Y = y;
+            Use_Cb = cb;
+            Use_Cr = cr;
+        }
+        public void SetFactors(float y, float iy, float cb, float cr)
+        {
+            Factor_Y = y;
+            Factor_iY = iy;
+            Factor_Cb = cb;
+            Factor_Cr = cr;
         }
 
         public Color Convert(Color oldColor)
         {
             float[] ycbcr = RGB2YCbCr(oldColor);
-            if (!B_Y) ycbcr[0] = K_Y;
-            if (!B_Cb) ycbcr[1] = K_Cb;
-            if (!B_Cr) ycbcr[2] = K_Cr;
+            if (!Use_Y) ycbcr[0] = Default_Y;
+            else ycbcr[0] = (Default_Y + (ycbcr[0] - Default_Y) * Factor_iY) * Factor_Y;
+            if (!Use_Cb) ycbcr[1] = Default_Cb;
+            else ycbcr[1] *= Factor_Cb;
+            if (!Use_Cr) ycbcr[2] = Default_Cr;
+            else ycbcr[2] *= Factor_Cr;
             Color newColor = YCbCr2RGB(ycbcr);
             return newColor;
         }
 
-        private float[] MatrixMath(float[,] constans, float[] values)
+        private float[] MatrixMath(float[,] consts, float[] values)
         {
             float[] result = new float[3];
 
             for (int i = 0; i < 3; i++)
             {
-                result[i] = 0;
                 for (int j = 0; j < 3; j++)
                 {
-                    result[i] += constans[j, i] * values[j];
+                    result[i] += consts[j, i] * values[j];
                 }
             }
 
@@ -82,9 +92,9 @@ namespace Display
 
             float[,] matrix =
             {
-                { K_R, -0.5f * K_R / (1 - K_B), 0.5f },
-                { K_G, -0.5f * K_G / (1 - K_B), -0.5f * K_G / (1 - K_R) },
-                { K_B, 0.5f, -0.5f * K_B / (1 - K_R) }
+                { Constant_R, -0.5f * Constant_R / (1 - Constant_B), 0.5f },
+                { Constant_G, -0.5f * Constant_G / (1 - Constant_B), -0.5f * Constant_G / (1 - Constant_R) },
+                { Constant_B, 0.5f, -0.5f * Constant_B / (1 - Constant_R) }
             };
 
             float[] result = MatrixMath(matrix, RGB);
@@ -96,8 +106,8 @@ namespace Display
             float[,] matrix =
             {
                 { 1,1,1},
-                { 0, - K_B / K_G * (2 - 2 * K_B), 2 - 2 * K_B },
-                { 2 - 2 * K_R, - K_R / K_G * (2 - 2 * K_R), 0 }
+                { 0, - Constant_B / Constant_G * (2 - 2 * Constant_B), 2 - 2 * Constant_B },
+                { 2 - 2 * Constant_R, - Constant_R / Constant_G * (2 - 2 * Constant_R), 0 }
             };
 
             float[] rgb = MatrixMath(matrix, YCbCr);
